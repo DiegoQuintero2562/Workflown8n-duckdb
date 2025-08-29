@@ -1,0 +1,103 @@
+# Dev Test – AI Data Engineer Role
+
+This repository demonstrates the process of data ingestion, modeling, and exposing key digital marketing metrics using DuckDB, SQL, and Python, with automation orchestrated by n8n.
+
+---
+
+## Project Structure
+
+```
+ads_spend_tmp.csv         # Example dataset (ads_spend.csv with metadata)
+kpi_metrics_param.sql     # Parameterized SQL script for KPIs
+kpi_report.sql            # SQL script for period comparison
+metrics_api.py            # Minimal API to expose metrics via HTTP
+my_warehouse.duckdb       # DuckDB database with loaded data
+```
+
+---
+
+## 1. Data Ingestion
+
+- **Dataset:** [ads_spend.csv](https://drive.google.com/file/d/1RXj_3txgmyX2Wyt9ZwM7l4axfi5A6EC-/view)
+- **Columns:** `date, platform, account, campaign, country, device, spend, clicks, impressions, conversions`
+- **Automation:** Uses n8n to download the CSV, add metadata (`load_date`, `source_file_name`), and load it into DuckDB ([my_warehouse.duckdb](my_warehouse.duckdb)).
+- **Persistence:** The n8n workflow ensures data persists after refresh.
+
+---
+
+## 2. KPI Modeling (SQL)
+
+- **CAC:** Customer Acquisition Cost = `spend / conversions`
+- **ROAS:** Return on Ad Spend = `(conversions * 100) / spend`
+- **Scripts:**
+  - [kpi_metrics_param.sql](kpi_metrics_param.sql): Parameterized query for any date range.
+  - [kpi_report.sql](kpi_report.sql): Compares last 30 days vs previous 30 days, showing absolute values and percent change.
+
+---
+
+## 3. Analyst Access
+
+- **Option 1:** Run [kpi_metrics_param.sql](kpi_metrics_param.sql) in DuckDB, replacing `:start_date` and `:end_date` with desired dates.
+- **Option 2:** Run the minimal API:
+
+```sh
+uvicorn metrics_api:app --reload
+```
+
+Query:
+```
+GET http://localhost:8000/metrics?start=2025-06-01&end=2025-06-30
+```
+Returns JSON with KPIs for the requested range.
+
+---
+
+## 4. Agent Demo (Optional)
+
+**Natural Language Question:**  
+“Compare CAC and ROAS for last 30 days vs prior 30 days.”
+
+**Mapping Template:**  
+- Detect intent to compare periods.
+- Run [kpi_report.sql](kpi_report.sql) to get a table with values and % change.
+- Respond with the tabular result.
+
+---
+
+## 5. Quick Setup
+
+1. Install DuckDB and Python 3.11+.
+2. Install Python dependencies:
+   ```sh
+   pip install duckdb fastapi uvicorn
+   ```
+3. Run the n8n workflow to load the data (import the provided workflow).
+4. Run SQL queries or the API as needed.
+
+---
+
+## 6. Results
+
+- Ver [kpi_report.sql](kpi_report.sql) para ejemplo de tabla comparativa.
+- Ejemplo de salida de la API:
+```json
+{
+  "total_spend": 12345.67,
+  "total_conversions": 456,
+  "CAC": 27.08,
+  "ROAS": 3.69
+}
+```
+
+---
+
+## 7. Deliverables
+
+- Export de workflow n8n (`.json`)
+- Este repositorio con scripts y modelos
+- Captura de pantalla de resultados
+- [Loom Video explicativo](#) (máx 5 min)
+
+---
+
+**Deadline:** 3 días desde la recepción del reto.
