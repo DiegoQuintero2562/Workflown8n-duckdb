@@ -76,28 +76,4 @@ Returns JSON with KPIs for the requested range.
 
 ---
 
-## 6. Results
 
-- Ver [kpi_report.sql](kpi_report.sql) para ejemplo de tabla comparativa.
-- Ejemplo de salida de la API:
-```json
-{
-  "total_spend": 12345.67,
-  "total_conversions": 456,
-  "CAC": 27.08,
-  "ROAS": 3.69
-}
-```
-
----
-
-## 7. Deliverables
-
-- Export de workflow n8n (`.json`)
-- Este repositorio con scripts y modelos
-- Captura de pantalla de resultados
-- [Loom Video explicativo](#) (máx 5 min)
-
----
-
-**Deadline:** 3 días desde la recepción del reto.
