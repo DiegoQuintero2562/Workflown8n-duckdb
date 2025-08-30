@@ -1,0 +1,195 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7c9d9b6a-2bfd-477a-9601-8968c125f0ca",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://drive.google.com/uc?export=download&id=1RXj_3txgmyX2Wyt9ZwM7l4axfi5A6EC-",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "73ce681b-ebb7-4865-8651-b58b64490edc",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "68248a8f-6ef3-4bc4-8126-2d65bc85d023",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7122c191-eaba-4319-92f6-447b86bdc682",
+              "name": "load_date",
+              "value": "={{ new Date().toISOString().split('T')[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "6fdcd319-12f9-4b28-8370-c628fd9679e2",
+              "name": "source_file_name",
+              "value": "=ads_spend.csv",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        0
+      ],
+      "id": "1a6bfd35-7d37-4aca-a46f-e1e9ad187254",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "options": {
+          "fileName": ".\\ads_spend_tmp.csv"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        832,
+        0
+      ],
+      "id": "d56da824-e22e-4cac-909c-35153c279d6c",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "./ads_spend_tmp.csv",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "98c6d4d2-a133-4bfe-9588-1c5fabb5075c",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "command": "duckdb my_warehouse.duckdb \"CREATE TABLE IF NOT EXISTS ads_spend AS SELECT * FROM read_csv_auto('./ads_spend_tmp.csv');\""
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        0
+      ],
+      "id": "3e8e6b90-ee5a-4901-ac50-d96b5959b7dd",
+      "name": "Execute Command"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5feb2efd-89b3-474a-9ab0-b65cc7a9e052",
+  "meta": {
+    "instanceId": "e1a952d84dbb3cd54e795cd8829fe67ec89caf0c3bd891db0360cec9ab2cfb04"
+  },
+  "id": "ZCWSurPNcb37xxqg",
+  "tags": []
+}
